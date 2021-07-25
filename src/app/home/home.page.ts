@@ -3,15 +3,14 @@ import { ApiService } from "../service/api.service";
 import { ChartDataSets } from "chart.js";
 import { Color, Label } from "ng2-charts";
 import { AngularFireDatabase } from "@angular/fire/database";
-import { environment } from "../../environments/environment";
-import { FirebaseApp } from "node_modules/@angular/fire";
 import { AngularFireAuth } from "@angular/fire/auth";
 import { first, map } from "rxjs/operators";
-import firebase from "firebase/app";
-import { AnyBuildOptions } from "@ionic/cli";
 import { IonSlides } from "@ionic/angular";
 import { Router } from "@angular/router";
-import { Score } from "scoresaber-api-client";
+import { environment } from "../../environments/environment";
+import { FirebaseApp } from "node_modules/@angular/fire";
+import firebase from "firebase/app";
+import { AnyBuildOptions } from "@ionic/cli";
 
 interface Task {
   Name: any;
@@ -25,24 +24,26 @@ interface Task {
   styleUrls: ["home.page.scss"],
 })
 export class HomePage implements OnInit {
+  //PLAYER INFOS
   playerInfo: any;
   scoresInfo: any;
   boolInfos = false;
   pid: string;
+  temp_id: string;
   currentid: string = "";
-  temp: any = null;
-  temp2: string = "";
-  error: any;
+  favid: string = "";
   cusername: any;
+  favs: any;
+  //GRAPH STUFF
   history: any[];
   historyph: string;
   counter: any;
   counter2: any;
-  defaultid: string;
   entries: any;
   myentries: any[] = [];
+  //OTHERS
   bool: boolean;
-  version: any = "4.2.0";
+  version: any = "4.3.0";
 
   @ViewChild("slides") slides: IonSlides;
 
@@ -56,28 +57,32 @@ export class HomePage implements OnInit {
     await this.getEntries();
 
     for (let i = 0; i < this.entries.length; i++) {
-      //Filter users Items
+      //FILTER USER ENTRIES
       if (this.entries[i].Rx == this.cusername) {
         this.myentries.push(this.entries[i]);
       }
     }
+
+    await this.getFav();
+
   }
 
   chartData: ChartDataSets[] = [{ data: [], label: "Rank" }];
   chartLabels: Label[];
 
-  constructor(
-    private api: ApiService,
-    public afAuth: AngularFireAuth,
-    public afDB: AngularFireDatabase,
-    public router: Router
-  ) {
+  constructor( private api: ApiService, public afAuth: AngularFireAuth, public afDB: AngularFireDatabase, public router: Router){
+
+    let temp_id = "";
+    if(this.favid != "null") temp_id = this.favid;
+    else temp_id = "76561198280372610";
+    console.log(temp_id);
+    console.log(this.favid);
     this.boolInfos = false;
-    this.api.getData("76561198280372610").subscribe((res) => {
+    this.api.getData(temp_id).subscribe((res) => {
       this.pid = res.playerInfo.playerId;
       this.playerInfo = res.playerInfo;
 
-      this.api.getBestScores("76561198280372610").subscribe((res) => {
+      this.api.getBestScores(temp_id).subscribe((res) => {
         this.scoresInfo = res.scores;
       });
 
@@ -89,43 +94,35 @@ export class HomePage implements OnInit {
 
       this.history = this.historyph.split(",", 50);
       this.history.push(res.playerInfo.rank);
-      //console.log(this.history);
 
-      for (let entry of this.history) {
-        if (this.counter == 1) {
-          this.chartLabels.push("yesterday");
-          this.chartData[0].data.push(this.history[this.counter2]);
-        } else if (this.counter == 0) {
-          this.chartLabels.push("now");
-          this.chartData[0].data.push(this.history[this.counter2]);
-        } else {
-          this.chartLabels.push(this.counter + " days ago");
-          this.chartData[0].data.push(this.history[this.counter2]);
-        }
-        this.counter = this.counter - 1;
-        this.counter2 = this.counter2 + 1;
-      }
-      this.boolInfos = true;
+      this.fillChart(this.history);
+      this.boolInfos = true;   
     });
   }
 
   chartOptions = {
     showLines: true,
-    responsive: true,
-
+    responsive: true,     
+    
     scales: {
+      xAxes: [{
+        gridLines: {
+            display:false
+        }
+    }],
       yAxes: [
         {
+          gridLines: {
+            display:false
+        },
           ticks: {
             reverse: true,
           },
         },
       ],
     },
-
     zoom: {
-      enabled: true,
-      mode: "y",
+      enabled: false
     },
   };
 
@@ -134,9 +131,9 @@ export class HomePage implements OnInit {
       borderColor: "#DA7373",
       pointHoverBorderColor: "#43CAA8",
       pointBorderColor: "#DA7373",
-      backgroundColor: "",
+      backgroundColor: "transparent",
     },
-  ];
+  ]; 
 
   chartType = "line";
   showLegend = false;
@@ -145,18 +142,18 @@ export class HomePage implements OnInit {
     if (!!this.pid) {
       this.playerInfo = "";
       this.boolInfos = true;
+
       this.api.getData(pid).subscribe(async (res) => {
         if (res.playerInfo.playerId != pid) {
-          //console.log("Wrong");
           this.boolInfos = false;
           this.api.getData(this.currentid).subscribe((res) => {
             this.playerInfo = res.playerInfo;
             this.boolInfos = true;
-            //console.log("if");
           });
           this.scoresInfo = [];
+
         } else {
-          console.log("Good one");
+          //Api Call Alright
           this.playerInfo = res.playerInfo;
           this.currentid = this.pid;
 
@@ -170,21 +167,7 @@ export class HomePage implements OnInit {
           this.history.push(res.playerInfo.rank);
           //console.log(this.history);
 
-          for (let entry of this.history) {
-            if (this.counter == 1) {
-              this.chartLabels.push("yesterday");
-              this.chartData[0].data.push(this.history[this.counter2]);
-            } else if (this.counter == 0) {
-              this.chartLabels.push("now");
-              this.chartData[0].data.push(this.history[this.counter2]);
-            } else {
-              this.chartLabels.push(this.counter + " days ago");
-              this.chartData[0].data.push(this.history[this.counter2]);
-            }
-            this.counter = this.counter - 1;
-            this.counter2 = this.counter2 + 1;
-          }
-
+          this.fillChart(this.history);
           this.bool = false;
           await this.getEntries();
           for (let i = 0; i < this.entries.length; i++) {
@@ -224,7 +207,6 @@ export class HomePage implements OnInit {
       });
     } else {
       //EINGABEFELD LEER
-      console.log("EINGABEFELD LEER");
       this.boolInfos = false;
       this.api.getData(this.currentid).subscribe((res) => {
         this.playerInfo = res.playerInfo;
@@ -236,25 +218,29 @@ export class HomePage implements OnInit {
 
         this.history = this.historyph.split(",", 50);
         this.history.push(res.playerInfo.rank);
-        //console.log(this.history);
 
-        for (let entry of this.history) {
-          if (this.counter == 1) {
-            this.chartLabels.push("yesterday");
-            this.chartData[0].data.push(this.history[this.counter2]);
-          } else if (this.counter == 0) {
-            this.chartLabels.push("now");
-            this.chartData[0].data.push(this.history[this.counter2]);
-          } else {
-            this.chartLabels.push(this.counter + " days ago");
-            this.chartData[0].data.push(this.history[this.counter2]);
-          }
-          this.counter = this.counter - 1;
-          this.counter2 = this.counter2 + 1;
-        }
-        this.boolInfos = true;
+        this.fillChart(this.history);
+        this.boolInfos = true;   
       });
     }
+  }
+
+  async fillChart(history){
+    //FILL CHART
+    for (let entry of history) {
+      if (this.counter == 1) {
+        this.chartLabels.push("yest");
+        this.chartData[0].data.push(this.history[this.counter2]);
+      } else if (this.counter == 0) {
+        this.chartLabels.push("now");
+        this.chartData[0].data.push(this.history[this.counter2]);
+      } else {
+        this.chartLabels.push(this.counter + " days");
+        this.chartData[0].data.push(this.history[this.counter2]);
+      }
+      this.counter = this.counter - 1;
+      this.counter2 = this.counter2 + 1;
+    } 
   }
 
   async apiGetData(pid: any) {
@@ -276,32 +262,34 @@ export class HomePage implements OnInit {
 
       this.history = this.historyph.split(",", 50);
       this.history.push(res.playerInfo.rank);
-      //console.log(this.history);
-
-      for (let entry of this.history) {
-        if (this.counter == 1) {
-          this.chartLabels.push("yesterday");
-          this.chartData[0].data.push(this.history[this.counter2]);
-        } else if (this.counter == 0) {
-          this.chartLabels.push("now");
-          this.chartData[0].data.push(this.history[this.counter2]);
-        } else {
-          this.chartLabels.push(this.counter + " days ago");
-          this.chartData[0].data.push(this.history[this.counter2]);
-        }
-        this.counter = this.counter - 1;
-        this.counter2 = this.counter2 + 1;
-      }
+      
+      await this.fillChart(this.history);
 
       this.pid = pid;
     });
   }
-
+ 
   addEntryToFirebase(obj: any) {
     this.afDB.list("Players/").push({
       Name: obj.playerName,
       ID: obj.playerId,
       Rx: this.cusername,
+    });
+  }
+
+  addFavToFirebase(obj: any) {
+    this.afDB.list("Favs/").push({
+      Name: obj.playerName,
+      ID: obj.playerId,
+      Rx: this.cusername,
+    });
+  }
+
+  FavTest() {
+    this.afDB.list("Favs/").push({
+      Name: "name",
+      ID: "id",
+      Rx: "mail",
     });
   }
 
@@ -324,24 +312,38 @@ export class HomePage implements OnInit {
     this.entries = await this.firebaseGeneralizedGetOnceWithId<Task>("Players");
   }
 
+  async getFav(): Promise<void> {
+    //Firebase Auslesen Aufrufen
+    this.favs = await this.firebaseGeneralizedGetOnceWithId<Task>("Favs");
+
+    for (let i = 0; i < this.favs.length; i++) {
+      //FILTER FAVS
+      if (this.favs[i].Rx == this.cusername) {
+        console.log(this.favs[i]);
+        this.favid = null;
+        this.favid = this.favs[i];
+        break;
+      }
+    }
+  }
+
   async logout() {
     await this.afAuth.signOut();
     this.router.navigateByUrl("/");
   }
 
   async loadEntry(pid: any) {
+    //LOAD PLAYER AS CURRENTLY CHOSEN
     await this.apiGetData(pid);
-
     this.api.getBestScores(pid).subscribe((res) => {
       this.scoresInfo = res.scores;
     });
   }
 
-  swipe() {
-    this.slides.slidePrev();
-  }
-
+  swipe() {this.slides.slidePrev();}
+ 
   async deleteItem(itemName) {
+    //DELETE CERTAIN PLAYER FROM PLAYER LIST
     await this.afDB.list("Players/").remove(itemName.key);
     this.entries = [];
     this.myentries = [];
@@ -355,16 +357,16 @@ export class HomePage implements OnInit {
   }
 
   recentScores(pid) {
+    //SORT FOR RECENT SCORES
     this.api.getRecentScores(pid).subscribe((res) => {
       this.scoresInfo = res.scores;
-      //console.log(this.scoresInfo);
     });
   }
 
   bestScores(pid) {
+    //SORT FOR BEST SCORES
     this.api.getBestScores(pid).subscribe((res) => {
       this.scoresInfo = res.scores;
-      //console.log(this.scoresInfo);
     });
   }
 }

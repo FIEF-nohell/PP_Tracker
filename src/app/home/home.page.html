@@ -71,7 +71,7 @@
         >
           <ion-item-sliding>
             <ion-item
-              (click)="loadEntry(entry.ID, entry)"
+              (click)="loadEntry(entry.ID)"
               (click)="swipe()"
               style="
                 border: none;
@@ -96,8 +96,10 @@
         </ion-card>
 
         <ion-button class="logout" (click)="logout()">LOGOUT</ion-button>
+        <ion-button (click)="FavTest()">Favs Test</ion-button>
 
         <p class="ver">version {{version}} - {{cusername}}</p>
+
       </div>
     </ion-slide>
   </ion-slides>

@@ -25,32 +25,32 @@ p {
 }
 
 .pname{
-  color: rgb(218, 115, 115);
+  color: var(--ion-color-primary);
   text-decoration: underline;
   margin-top: 20px;
   font-size: 35px;
 }
 
 .pid{
-  color: rgb(67, 202, 168);
+  color: var(--ion-color-secondary);
   font-size: 25px;
 }
 
 .pue1{
-  color:rgb(218, 115, 115);
+  color:var(--ion-color-primary);
   font-size: 25px;
 }
 
 .pue2{
-  color:rgb(67, 202, 168);
+  color: var(--ion-color-secondary);
   font-size: 25px;
 }
 
 .idinput{
   font-family: "arial";
   width: 235px;
-  background-color: rgb(218, 115, 115);
-  border-color:  rgb(218, 115, 115);
+  background-color: var(--ion-color-primary);
+  border-color:  var(--ion-color-primary);
   color:white;
   border-style: dashed;
 
@@ -72,11 +72,11 @@ ion-item{
   width: 235px;
   margin-left: 30px;
   border-style: solid;
-  border-color: rgb(67, 202, 168);
+  border-color: var(--ion-color-secondary);
 }
 
 .snu{
-  --background: var(--ion-color-btn);
+  --background: var(--ion-color-secondary);
   width: 235px;
   color: rgb(35, 35, 35);
   font-weight: bold;
@@ -85,21 +85,21 @@ ion-item{
 }
 
 .tops{
-  --background: rgb(218, 115, 115);
+  --background: var(--ion-color-primary);
   width: 140px;
   color: rgb(35, 35, 35);
   font-weight: bold;
 }
 
 .recents{
-  --background: rgb(67, 202, 168);
+  --background: var(--ion-color-secondary);
   width: 140px;
   color: rgb(35, 35, 35);
   font-weight: bold;
 }
 
 .logout{
-  --background: rgb(218, 115, 115);
+  --background: var(--ion-color-primary);
   width: 235px;
   color: rgb(35, 35, 35);
   font-weight: bold;
@@ -154,14 +154,6 @@ ion-card.savedEntry{
   color: rgb(150, 146, 146);
 }
 
-.GOOGLEBUTTON{
-  --background: rgb(67, 202, 168);
-  width: 235px;
-  font-size: 16px;
-  color: rgb(35, 35, 35);
-  font-weight: bold;
-  margin-top: 70%;
-}
 
 .pscores{
   margin-left: 25px;
@@ -174,13 +166,13 @@ ion-card.savedEntry{
   margin-left: 25px;
   font-size: 17px;
   font-family: "Arial";
-  color: rgb(218, 115, 115);
+  color: var(--ion-color-primary);
 }
 .ps3{
   margin-left: 15px;
   font-size: 17px;
   font-family: "Arial";
-  color: rgb(67, 202, 168);
+  color: var(--ion-color-secondary);
 }
 
 .ps4{
