@@ -1,5 +1,8 @@
 <ion-content [fullscreen]="true">
   <ion-slides #slides>
+    <ion-slide *ngIf="boolInfos == false">
+      <p class="ver" *ngIf="boolInfos == false">LOADING</p>
+    </ion-slide>
     <ion-slide>
       <div class="profile">
         <ion-card>
@@ -10,6 +13,8 @@
             ID: {{playerInfo.playerId}}
           </p>
         </ion-card>
+        
+        
         <ion-card>
           <p class="pue1" *ngIf="boolInfos == true">Player Ranking:</p>
           <p *ngIf="boolInfos == true">
@@ -24,13 +29,14 @@
             <ion-label position="floating"></ion-label>
             <ion-input type="text" name="inputid" [(ngModel)]="pid"></ion-input>
           </ion-item>
-
+          
           <ion-button
-            *ngIf="boolInfos == true"
-            (click)="penisklatsche(pid)"
-            class="snu"
-            >Search User / REFRESH</ion-button
+          *ngIf="boolInfos == true"
+          (click)="penisklatsche(pid)"
+          class="snu"
+          >Search / REFRESH</ion-button
           >
+          <ion-button class="tops" *ngIf="boolInfos == true" (click)="addFavToFirebase()">SET DEFAULT</ion-button>
         </ion-card>
         <ion-card id="neff">
           <canvas
@@ -59,7 +65,7 @@
           <p class="ps4" style="float: right;">acc: {{((entry.score / entry.maxScore) * 100).toFixed(2)}}%</p>
           </ion-card>
         
-        <p class="ver">version {{version}} - {{cusername}}</p>
+        <p *ngIf="boolInfos == true" class="ver">version {{version}} - {{cusername}}</p>
       </div>
     </ion-slide>
     <ion-slide class="profiles">
@@ -96,9 +102,9 @@
         </ion-card>
 
         <ion-button class="logout" (click)="logout()">LOGOUT</ion-button>
-        <ion-button (click)="FavTest()">Favs Test</ion-button>
+        
 
-        <p class="ver">version {{version}} - {{cusername}}</p>
+        <p class="ver" *ngIf="boolInfos == true" >version {{version}} - {{cusername}}</p>
 
       </div>
     </ion-slide>

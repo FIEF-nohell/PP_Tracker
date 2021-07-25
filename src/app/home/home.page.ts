@@ -72,32 +72,6 @@ export class HomePage implements OnInit {
 
   constructor( private api: ApiService, public afAuth: AngularFireAuth, public afDB: AngularFireDatabase, public router: Router){
 
-    let temp_id = "";
-    if(this.favid != "null") temp_id = this.favid;
-    else temp_id = "76561198280372610";
-    console.log(temp_id);
-    console.log(this.favid);
-    this.boolInfos = false;
-    this.api.getData(temp_id).subscribe((res) => {
-      this.pid = res.playerInfo.playerId;
-      this.playerInfo = res.playerInfo;
-
-      this.api.getBestScores(temp_id).subscribe((res) => {
-        this.scoresInfo = res.scores;
-      });
-
-      this.chartData[0].data = [];
-      this.chartLabels = [];
-      this.historyph = res.playerInfo.history;
-      this.counter = 49;
-      this.counter2 = 0;
-
-      this.history = this.historyph.split(",", 50);
-      this.history.push(res.playerInfo.rank);
-
-      this.fillChart(this.history);
-      this.boolInfos = true;   
-    });
   }
 
   chartOptions = {
@@ -277,19 +251,12 @@ export class HomePage implements OnInit {
     });
   }
 
-  addFavToFirebase(obj: any) {
+  async addFavToFirebase() {
+    await this.getFavForUpdate();
     this.afDB.list("Favs/").push({
-      Name: obj.playerName,
-      ID: obj.playerId,
+      Name: this.playerInfo.playerName,
+      ID: this.pid,
       Rx: this.cusername,
-    });
-  }
-
-  FavTest() {
-    this.afDB.list("Favs/").push({
-      Name: "name",
-      ID: "id",
-      Rx: "mail",
     });
   }
 
@@ -312,6 +279,19 @@ export class HomePage implements OnInit {
     this.entries = await this.firebaseGeneralizedGetOnceWithId<Task>("Players");
   }
 
+  async getFavForUpdate(): Promise<void> {
+    //Firebase Auslesen Aufrufen
+    this.favs = await this.firebaseGeneralizedGetOnceWithId<Task>("Favs");
+
+    for (let i = 0; i < this.favs.length; i++) {
+      //FILTER FAVS
+      if (this.favs[i].Rx == this.cusername) {
+        await this.deleteFav(this.favs[i]);
+        break;
+      }      
+    }
+  }
+
   async getFav(): Promise<void> {
     //Firebase Auslesen Aufrufen
     this.favs = await this.firebaseGeneralizedGetOnceWithId<Task>("Favs");
@@ -319,12 +299,17 @@ export class HomePage implements OnInit {
     for (let i = 0; i < this.favs.length; i++) {
       //FILTER FAVS
       if (this.favs[i].Rx == this.cusername) {
-        console.log(this.favs[i]);
         this.favid = null;
-        this.favid = this.favs[i];
+        this.favid = this.favs[i].ID;
         break;
       }
+      else this.favid = "76561198280372610";
     }
+
+    await this.apiGetData(this.favid);
+
+    this.bestScores(this.favid);
+
   }
 
   async logout() {
@@ -354,6 +339,11 @@ export class HomePage implements OnInit {
         this.myentries.push(this.entries[i]);
       }
     }
+  }
+
+  async deleteFav(itemName) {
+    //DELETE CERTAIN PLAYER FROM PLAYER LIST
+    await this.afDB.list("Favs/").remove(itemName.key);
   }
 
   recentScores(pid) {
