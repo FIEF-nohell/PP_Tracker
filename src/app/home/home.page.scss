@@ -25,16 +25,12 @@ p {
 }
 
 .pname{
-  color: var(--ion-color-primary);
+  color: var(--ion-color-secondary);
   text-decoration: underline;
   margin-top: 20px;
   font-size: 35px;
 }
 
-.pid{
-  color: var(--ion-color-secondary);
-  font-size: 25px;
-}
 
 .pue1{
   color:var(--ion-color-primary);
@@ -62,7 +58,7 @@ p {
 }
 
 ion-item{
-  width: 235px;
+  width: 260px;
   margin-left: 30px;
   border-style: solid;
   border-color: var(--ion-color-secondary);
@@ -75,6 +71,14 @@ ion-item{
   font-weight: bold;
   margin-left: 30px;
   margin-bottom: 10px;
+}
+
+.snu2{
+  --background: var(--ion-color-primary);
+  width: 110px;
+  color: rgb(35, 35, 35);
+  font-weight: bold;
+  margin-left: 2px;
 }
 
 .tops{

@@ -9,9 +9,6 @@
           <p class="pname" *ngIf="boolInfos == true">
             {{playerInfo.playerName}}
           </p>
-          <p class="pid" *ngIf="boolInfos == true">
-            ID: {{playerInfo.playerId}}
-          </p>
         </ion-card>
         
         
@@ -30,13 +27,8 @@
             <ion-input type="text" name="inputid" [(ngModel)]="pid"></ion-input>
           </ion-item>
           
-          <ion-button
-          *ngIf="boolInfos == true"
-          (click)="penisklatsche(pid)"
-          class="snu"
-          >Search / REFRESH</ion-button
-          >
-          <ion-button class="tops" *ngIf="boolInfos == true" (click)="addFavToFirebase()">SET DEFAULT</ion-button>
+          <ion-button *ngIf="boolInfos == true" (click)="penisklatsche(pid)" class="snu">Search / REFRESH</ion-button>
+          <ion-button class="snu2" *ngIf="boolInfos == true" (click)="addFavToFirebase()">SET DEFAULT</ion-button>
         </ion-card>
         <ion-card id="neff">
           <canvas
