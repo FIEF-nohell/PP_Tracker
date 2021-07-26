@@ -7,10 +7,6 @@ import { AngularFireAuth } from "@angular/fire/auth";
 import { first, map } from "rxjs/operators";
 import { IonSlides } from "@ionic/angular";
 import { Router } from "@angular/router";
-import { environment } from "../../environments/environment";
-import { FirebaseApp } from "node_modules/@angular/fire";
-import firebase from "firebase/app";
-import { AnyBuildOptions } from "@ionic/cli";
 
 interface Task {
   Name: any;

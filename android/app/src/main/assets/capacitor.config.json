@@ -1,0 +1,15 @@
+{
+  "appId": "com.nohell.pptracker",
+  "appName": "PP tracker",
+  "bundledWebRuntime": false,
+  "npmClient": "npm",
+  "webDir": "www",
+  "plugins": {
+    "SplashScreen": {
+      "launchShowDuration": 0
+    }
+  },
+  "cordova": {}
+}
+
+

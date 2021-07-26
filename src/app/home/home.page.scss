@@ -58,7 +58,7 @@ p {
 }
 
 ion-item{
-  width: 260px;
+  width: 250px;
   margin-left: 30px;
   border-style: solid;
   border-color: var(--ion-color-secondary);
@@ -66,16 +66,21 @@ ion-item{
 
 .snu{
   --background: var(--ion-color-secondary);
-  width: 150px;
+  width: 235px;
   color: rgb(35, 35, 35);
   font-weight: bold;
   margin-left: 30px;
   margin-bottom: 10px;
 }
 
+.btns{
+  display: inline-flex;
+}
+
 .snu2{
   --background: var(--ion-color-primary);
   width: 110px;
+  float: right;
   color: rgb(35, 35, 35);
   font-weight: bold;
   margin-left: 2px;
