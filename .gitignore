@@ -16,8 +16,6 @@ $RECYCLE.BIN/
 *.log
 log.txt
 npm-debug.log*
-private_key.pepk
-sas.jks
 
 /.idea
 /.ionic
